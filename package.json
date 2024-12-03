@@ -16,7 +16,7 @@
     "react-tinder-card": "^1.6.4",
     "web-vitals": "^2.1.4"
   },
-  "proxy": "https://5410-31-135-213-5.ngrok-free.app/",
+  "proxy": "https://5410-31-135-213-5.ngrok-free.app",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

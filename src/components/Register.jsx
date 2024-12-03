@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "./Register.css";
 import Logo from '../img/logo.png'
 import axios from "axios";
+import api from "./api";
 
 const RegisterPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("+998");
@@ -16,10 +17,8 @@ const RegisterPage = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("https://5410-31-135-213-5.ngrok-free.app/api/auth/register", {
+      const response = await api.post("/auth/register", {
         phoneNumber, password, firstName, lastName, birthDate, gender, city
-      }, {
-        withCredentials: true,
       });
       console.log("Registration successful:", response.data);
       alert("Registration successful!")

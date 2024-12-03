@@ -7,6 +7,7 @@ import './App.css';
 import axios from 'axios';
 import Chat from './components/Chat';
 import UserProfile from './components/UserProfile';
+import api from './components/api';
 
 function App() {
   const nav = [
@@ -54,22 +55,14 @@ function App() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(
-          'https://5410-31-135-213-5.ngrok-free.app/api/users/all',
-          {
-            headers: {
-              'ngrok-skip-browser-warning': 'true',
-            },
-            withCredentials: true,
-          }
-        );
+        const response = await api.get('/users/all');
         if (response.status === 200 && Array.isArray(response.data)) {
           setDb(response.data);
         } else {
           console.error('Unexpected response format:', response.data);
         }
       } catch (error) {
-        console.error('Error fetching data:', error.message);
+        // console.error('Error fetching data:', error.message);
       }
     };
     fetchUsers();

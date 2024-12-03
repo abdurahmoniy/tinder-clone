@@ -3,6 +3,7 @@ import "./Login.css";
 import Logo from '../img/logo.png'
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import api from "./api";
 
 const Login = ({ setUserData }) => {
   const [phoneNumber, setPhoneNumber] = useState("+998");
@@ -11,26 +12,33 @@ const Login = ({ setUserData }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+  
     try {
-      const response = await axios.post("https://5410-31-135-213-5.ngrok-free.app/api/auth/login", {
-        phoneNumber, 
+      // Send login request
+      const response = await api.post('/auth/login', {
+        phoneNumber,
         password,
-        },{
-          withCredentials: true,
-        });
+      });
+  
+      // Extract user data from response
       const userData = response.data;
+  
+      // Save token and user data to local storage
       localStorage.setItem("authToken", userData.token);
       localStorage.setItem("userData", JSON.stringify(userData));
+  
       console.log("Logging in with", phoneNumber, password, response.data);
       alert("Login successful");
+  
+      // Update state and navigate
       setUserData(userData);
       navigate("/");
-
     } catch (error) {
-      console.log("Login failed", error);
-      alert("Login failed");
+      console.error("Login failed", error.response?.data || error.message);
+      alert("Login failed: " + (error.response?.data?.message || error.message));
     }
   };
+  
 
 
 
