@@ -1,0 +1,95 @@
+.register-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+    max-width: 350px;
+    width: 90vw;
+    border-radius: 20px;
+    background-color: #1f1f1fc2;
+    overflow-y: auto;
+  }
+  
+  .register-logo img {
+    width: 100px;
+    margin-top: 20px;
+  }
+  
+  .register-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .register-button {
+    padding: 10px 20px;
+    background-color: #fe5858;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 250px;
+    margin-top: 10px;
+    font-size: 16px;
+  }
+  
+  .sign-in-link {
+    margin-top: 20px;
+    font-size: 14px;
+  }
+  .phone-input {
+    display: flex;
+    align-items: center;
+  }
+  
+  .phone-prefix {
+    width: 50px;
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px 0 0 5px;
+    background-color: #f1f1f1;
+  }
+  
+  .register-input {
+    margin: 5px 0;
+    border: 1px solid transparent;
+    padding: 10px;
+    width: 250px;
+    background: #333333ab;
+    border-radius: 5px;
+    color: #fff;
+  }
+  .register-input::placeholder{
+    color: #fff;
+  }
+  
+  .phone-number {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 0 5px 5px 0;
+  }
+  
+  .register-button {
+    padding: 10px 20px;
+    background-color: #fe5858;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 250px;
+    margin-top: 10px;
+    font-size: 16px;
+  }
+  
+  .sign-in-link {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #fff;
+  }
+  .sign-in-link a {
+    text-decoration: underline;
+    color: rgb(111, 111, 255);
+  }
+  

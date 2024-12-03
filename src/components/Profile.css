@@ -1,0 +1,128 @@
+::-webkit-scrollbar {
+    width: 1px;
+}
+
+/* Profile Container */
+.profile_container {
+    max-width: 350px;
+    width: 100%;
+    height: 100vh;
+    /* Full container height */
+    margin: auto;
+    color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    /* Enable scrolling for the entire profile container */
+}
+
+/* Profile Head */
+.profile-head {
+    font-size: 36px;
+    font-family: monospace;
+    padding: 10px;
+}
+
+/* Profile Info */
+.profile-info {
+    background: #1f1f1fc2;
+    border-radius: 30px;
+    padding: 30px 10px;
+    margin: 80px 5px 20px 5px;
+    position: relative;
+    flex-direction: column;
+    min-height: 50vh;
+    /* Ensure it has enough space */
+}
+
+/* Profile */
+.prof {
+    width: 100%;
+    flex-direction: column;
+    margin: 0 auto;
+}
+
+/* Profile Image */
+.prof_img {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    top: -10%;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+.prof_img img {
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #ccc;
+}
+
+/* Profile Name */
+.prof_name {
+    text-align: center;
+    margin: 100px 0 20px;
+}
+
+.prof_name .name {
+    font-size: 28px;
+}
+
+/* Profile Info Details */
+.prof_info {
+    display: block;
+    background: #333333ab;
+    border-radius: 10px;
+    padding: 10px 15px;
+    flex-direction: column;
+}
+
+.prof_info div {
+    border-bottom: 1px solid #ffffff8e;
+    padding: 15px 0;
+}
+
+/* Info Item */
+.prof_edit {
+    font-size: 18px;
+    color: #fff;
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 10px;
+}
+
+.prof_edit input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: #333333ab;
+    color: #fff;
+    display: block;
+    box-sizing: border-box;
+}
+
+/* Action Buttons */
+.action-btn {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.action-btn button {
+    padding: 10px 15px;
+    width: 150px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #fd2e78;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}

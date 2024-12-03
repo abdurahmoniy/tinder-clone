@@ -1,0 +1,384 @@
+#root {
+  /* text-align: center; */
+  /* display: flex; */
+  /* justify-content: center; */
+  width: 100vw;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #000;
+}
+
+* {
+  user-select: none;
+}
+
+.wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.logo {
+  width: 100px;
+}
+
+.app {
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border: 1px solid #fff; */
+  /* margin: 20px 0; */
+  height: 100vh;
+}
+
+.row {
+  flex-direction: row !important;
+}
+
+.row>* {
+  margin: 5px;
+}
+
+h1 {
+  font-family: 'Damion', cursive;
+  color: #fff;
+  text-shadow: 0px 0px 60px 0px rgba(0,0,0,0.30);
+}
+
+h2 {
+  color: #fff;
+}
+
+.swipe {
+  position: absolute;
+}
+
+.cardContainer {
+  width: 90vw;
+  max-width: 350px;
+  height: 400px;
+}
+
+.card {
+  position: relative;
+  background-color: #fff;
+  width: 90vw;
+  max-width: 350px;
+  height: 400px;
+  box-shadow: 0px 0px 60px 0px rgba(0,0,0,0.30);
+  border-radius: 20px;
+  background-size: cover;
+  background-position: center;
+}
+
+.cardContent {
+  width: 100%;
+  height: 100%;
+}
+
+.card h3 {
+  position: absolute;
+  bottom: 0;
+  margin: 10px;
+  color: #fff;
+}
+
+.infoText {
+  width: 100%;
+  justify-content: center;
+  display: flex;
+  color: #fff;
+  animation-name: popup;
+  animation-duration: 800ms;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  background: #2b2b2b;
+  border-radius: 50px;
+  width: 90vw;
+  max-width: 350px;
+  /* width: 100%; */
+}
+
+.buttons button {
+  transition: .1s ease-in;
+  border: none;
+}
+
+.buttons .like, .dislike {
+  width: 38%;
+  margin: 5px;
+  cursor: pointer;
+  padding: 17 px 0;
+  border-radius: 50px;
+  text-align: center;
+}
+
+.buttons .undo {
+  width: 18%;
+  border-radius: 50px;
+  color: #fff;
+  cursor: pointer;
+  text-align: center;
+  padding: 17px 0;
+  margin: 5px;
+  z-index: 0;
+}
+
+.buttons i {
+  font-size: 24px;
+}
+
+.buttons button:hover {
+  transform: scale(1.02);
+}
+
+@keyframes popup {
+  0%   { transform: scale(1,1) }
+  10%  { transform: scale(1.1,1.1) }
+  30%  { transform: scale(.9,.9) }
+  50%  { transform: scale(1,1) }
+  57%  { transform: scale(1,1) }
+  64%  { transform: scale(1,1) }
+  100% { transform: scale(1,1) }
+}
+
+.navigation {
+  display: flex;
+  color: #fff;
+  justify-content: space-around;
+  align-items: center;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  position: fixed;
+  width: 100%;
+  max-width: 400px;
+  padding-bottom: 30px;
+  background: #000;
+  padding: 10px 0;
+}
+
+.navigation .nav_item {
+  color: #fff;
+  font-size: 24px;
+}
+
+.navigation .nav_item.active {
+  color: #fd2e78;
+  transition: .5s ease;
+}
+
+.chat {
+  color: #fff;
+  max-width: 350px;
+  width: 100%;
+  max-height: 100vh;
+  /* padding: 0 20px; */
+  /* border: 1px solid #fff; */
+}
+
+.chat .title {
+  font-size: 36px;
+  font-family:monospace;
+  padding: 10px ;
+}
+.chat-list, .chat-window {
+  width: 400px;
+  height: 600px;
+  margin: 20px 0;
+  background: #000;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  /* border-radius: 8px; */
+  overflow: hidden;
+}
+
+.user-list {
+  padding: 16px;
+}
+
+.user-item {
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  color: #fff;
+  transition: background-color 0.3s;
+}
+
+.user-item .first {
+  display: flex;
+  gap: 10px;
+}
+
+.user-item img {
+  width: 50px;
+  border-radius: 25px;
+}
+
+.user-item .first .name {
+  font-size: 18px;
+}
+
+.user-item .first .last-message {
+  color: #ffffffad;
+}
+
+.user-item .last {
+  display: block;
+  position: relative;
+}
+
+.user-item .last .last-chat {
+  color: #ffffff7a;
+  display: inline-block;
+}
+
+.user-item .last .new-message {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 15px;
+  height: 15px;
+  background: #fd2e78;
+  border-radius: 50%;
+  font-size: 12px;
+}
+
+.user-item:hover {
+  background-color: #dddddd2d;
+  /* color: #000; */
+}
+
+.chat-window {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid #dddddda1;
+  /* background-color: #007bff; */
+  color: white;
+}
+
+.chat-header button {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.messages {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message {
+  padding: 10px 14px;
+  border-radius: 20px;
+  max-width: 70%;
+}
+
+.message.user {
+  align-self: flex-end;
+  background-color: #fd2e78;
+  color: white;
+}
+
+.message.bot {
+  align-self: flex-start;
+  background-color: #f1f0f0;
+  color: #333;
+}
+
+.input-container {
+  display: flex;
+  padding: 10px;
+  /* background: #f9f9f9; */
+  border-top: 1px solid #ddd;
+}
+
+.input-container input {
+  flex: 1;
+  padding: 15px;
+  border: 1px solid #dddddda1;
+  background: transparent;
+  border-radius: 20px;
+  outline: none;
+  color: #fff;
+  margin-right: 8px;
+}
+
+.input-container input::placeholder {
+  color: #fff;
+}
+
+.input-container button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 20px;
+  background-color: #fd2e78;
+  color: white;
+  cursor: pointer;
+}
+
+.input-container button:hover {
+  background-color: #ff0059;
+}
+
+.currentUser {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.currentUser .nameTitle {
+  display: block;
+  margin-left: 10px;
+  font: bold;
+  font-size: 18px;
+}
+
+.currentUser img {
+  width: 35px;
+  margin-left: 10px;
+  border-radius: 50%;
+}
+
+.currentUser .nameTitle .isActive {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.currentUser .nameTitle .isActive .activeText {
+  font-size: 14px;
+  color: #ffffff83;
+}
+
+.currentUser .nameTitle .isActive .activeDot {
+  color: rgb(53, 255, 53);
+  font-size: 8px;
+  /* background: green; */
+
+}
