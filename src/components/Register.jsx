@@ -3,7 +3,7 @@ import "./Register.css";
 import Logo from '../img/logo.png'
 import axios from "axios";
 import api from "./api";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("+998");
@@ -15,22 +15,27 @@ const RegisterPage = () => {
   const [city, setCity] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const navigate = useNavigate();
+
   const handleRegister = async (e) => {
     e.preventDefault();
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match!");
+      return;
+   } 
+
     try {
       const response = await api.post("/auth/register", {
         phoneNumber, password, firstName, lastName, birthDate, gender, city
       });
       console.log("Registration successful:", response.data);
       alert("Registration successful!")
-      Navigate('/login')
+      navigate('/login')
     } catch (error) {
       console.log("Registration failed:", error);
       alert("Registration failed!");
     }
-    if (password !== confirmPassword) {
-       alert("Passwords do not match!")
-    } 
   };
 
   return (
