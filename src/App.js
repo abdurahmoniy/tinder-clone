@@ -43,6 +43,7 @@ function App() {
   const [userData, setUserData] = useState(null);
   const [authMessage, setAuthMessage] = useState({ text: '', status: '' });
   const [messageClass, setMessageClass] = useState("");
+  const [navDisplay, setNavDisplay] = useState(true);
 
   const getBgColor = () => {
     if (authMessage.status === 'success') return 'green';
@@ -97,9 +98,9 @@ function App() {
         )}
         <Routes>
           <Route path="/" element={<Advanced db={db} />} />
-          <Route path="/login" element={<Login setUserData={setUserData} setAuthMessage={setAuthMessage}/>} />
+          <Route path="/login" element={<Login setUserData={setUserData} setAuthMessage={setAuthMessage} />} />
           <Route path="/register" element={<Register setAuthMessage={setAuthMessage} />} />
-          <Route path="/chat" element={<Chat db={db} />} />
+          <Route path="/chat" element={<Chat db={db} userData={userData} setNavDisplay={setNavDisplay}/>} />
           <Route
             path="/profile"
             element={
@@ -111,7 +112,10 @@ function App() {
             }
           />
         </Routes>
-        <Nav nav={nav} />
+        {navDisplay ? (
+          <Nav nav={nav} />
+        ) : ""
+        }
       </Router>
     </div>
   );
