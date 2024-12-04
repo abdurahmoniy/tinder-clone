@@ -3,6 +3,7 @@ import "./Register.css";
 import Logo from '../img/logo.png'
 import axios from "axios";
 import api from "./api";
+import { Navigate } from "react-router-dom";
 
 const RegisterPage = () => {
   const [phoneNumber, setPhoneNumber] = useState("+998");
@@ -22,6 +23,7 @@ const RegisterPage = () => {
       });
       console.log("Registration successful:", response.data);
       alert("Registration successful!")
+      Navigate('/login')
     } catch (error) {
       console.log("Registration failed:", error);
       alert("Registration failed!");
