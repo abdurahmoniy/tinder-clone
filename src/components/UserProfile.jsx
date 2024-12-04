@@ -59,7 +59,9 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
 
     return (
         <div className="profile_container">
-            <div className="profile-head">Profile</div>
+            <div className="profile-head">
+                {isEditing ? "Edit Profile" : "Profile"}
+            </div>
             <div className="prof_wrap">
                 <div className="profile-info">
                     {isEditing ? (
@@ -123,6 +125,7 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
                                     name="gender"
                                     value={editedUserData.gender || ''}
                                     onChange={handleInputChange}
+                                    className='gender-input'
                                 >
                                     <option value="">Select Gender</option>
                                     <option value="MALE">MALE</option>

@@ -5,7 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import api from "./api";
 
-const Login = ({ setUserData }) => {
+const Login = ({ setUserData, setAuthMessage }) => {
   const [phoneNumber, setPhoneNumber] = useState("+998");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -14,28 +14,32 @@ const Login = ({ setUserData }) => {
     e.preventDefault();
   
     try {
-      // Send login request
       const response = await api.post('/auth/login', {
         phoneNumber,
         password,
       });
   
-      // Extract user data from response
       const userData = response.data;
   
-      // Save token and user data to local storage
       localStorage.setItem("authToken", userData.token);
       localStorage.setItem("userData", JSON.stringify(userData));
   
       console.log("Logging in with", phoneNumber, password, response.data);
-      alert("Login successful");
-  
-      // Update state and navigate
+      setAuthMessage({ text: 'Login successful! Welcome back.', status: 'success' });
+
       setUserData(userData);
       navigate("/");
+
+      setTimeout(() => {
+        setAuthMessage(null);
+      }, 3000);
     } catch (error) {
       console.error("Login failed", error.response?.data || error.message);
-      alert("Login failed: " + (error.response?.data?.message || error.message));
+      setAuthMessage({ text: 'Login failed: ' + (error.response?.data?.message || error.message), status: 'fail' });
+
+      setTimeout(() => {
+        setAuthMessage(null);
+      }, 5000);
     }
   };
   

@@ -41,6 +41,14 @@ function App() {
   const [db, setDb] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
+  const [authMessage, setAuthMessage] = useState({ text: '', status: '' });
+  const [messageClass, setMessageClass] = useState("");
+
+  const getBgColor = () => {
+    if (authMessage.status === 'success') return 'green';
+    if (authMessage.status === 'fail') return 'red';
+    return 'transparent';
+  }
 
   // Fetch stored user data from localStorage
   useEffect(() => {
@@ -80,10 +88,17 @@ function App() {
   return (
     <div className="app">
       <Router>
+        {authMessage && (
+          <AuthMessage
+            message={authMessage.text}
+            status={authMessage.status}
+            className={messageClass}
+          />
+        )}
         <Routes>
           <Route path="/" element={<Advanced db={db} />} />
-          <Route path="/login" element={<Login setUserData={setUserData} />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login setUserData={setUserData} setAuthMessage={setAuthMessage}/>} />
+          <Route path="/register" element={<Register setAuthMessage={setAuthMessage} />} />
           <Route path="/chat" element={<Chat db={db} />} />
           <Route
             path="/profile"
@@ -116,6 +131,14 @@ const Nav = ({ nav }) => {
           <i className={item.icon}></i>
         </Link>
       ))}
+    </div>
+  );
+};
+
+const AuthMessage = ({ message, status, className }) => {
+  return (
+    <div className={`${className} auth-message ${status}`}>
+      {message}
     </div>
   );
 };
