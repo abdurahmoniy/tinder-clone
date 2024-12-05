@@ -2,6 +2,7 @@ import React, { useState, useMemo, useRef, useContext, useEffect } from 'react';
 import TinderCard from 'react-tinder-card';
 import logo from '../img/logo.png';
 import { useNavigate } from 'react-router-dom';
+import api from './api';
 
 function Advanced({ db, userData }) {
   const [currentIndex, setCurrentIndex] = useState(db.length - 1);
@@ -33,9 +34,19 @@ function Advanced({ db, userData }) {
 
   const canSwipe = currentIndex >= 0;
 
-  const swiped = (direction, nameToDelete, index) => {
+  const swiped = async(direction, nameToDelete, index, user) => {
     setLastDirection(direction);
     updateCurrentIndex(index - 1);
+
+    // if (direction === 'right' || direction === 'left') {
+    //   const action = direction === 'right' ? 'right' : 'dislike';
+    //   try {
+    //     const response = await api.post(`/${action}`, {userId: user.id});
+    //     console.log(user)
+    //   } catch (error) {
+
+    //   }
+    // }
   };
 
   const outOfFrame = (name, idx) => {

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Chat({ db, setNavDisplay, userData }) {
   const [input, setInput] = useState("");
@@ -49,11 +50,28 @@ export default function Chat({ db, setNavDisplay, userData }) {
 
   return (
     <div className="chat">
-      {!currentUser ? (
+      {/* {!currentUser ? (
         <div className="title">Messages</div>
-      ) : null}
+      ) : null} */}
       {!currentUser ? (
         <div className="chat-list">
+          <div className="current-user">
+            <Link to='/profile'>
+              {userData.firstName}
+            </Link>
+          </div>
+          <div className="searchbar">
+            <input 
+              type="search" 
+              placeholder="Search..."
+            />
+            <i className="fas fa-search"></i>
+          </div>
+          <hr />
+          <div className="title">
+            Chats
+            <i className="fas fa-ellipsis"></i>
+          </div>
           {filteredDb.map((user) => (
             <div
               key={user.id}
@@ -62,7 +80,7 @@ export default function Chat({ db, setNavDisplay, userData }) {
             >
               <div className="first">
                 <img
-                  src="https://img.freepik.com/free-vector/user-blue-gradient_78370-4692.jpg"
+                  src="https://as1.ftcdn.net/v2/jpg/03/46/83/96/1000_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
                   alt=""
                   className="user-avatar"
                 />
