@@ -3,7 +3,7 @@ import TinderCard from 'react-tinder-card';
 import logo from '../img/logo.png';
 import { useNavigate } from 'react-router-dom';
 
-function Advanced({ db }) {
+function Advanced({ db, userData }) {
   const [currentIndex, setCurrentIndex] = useState(db.length - 1);
   const [lastDirection, setLastDirection] = useState();
   const currentIndexRef = useRef(currentIndex);
@@ -16,12 +16,13 @@ function Advanced({ db }) {
     }
   }, [navigate]);
 
-  // Create refs after db is available
   const childRefs = useMemo(
     () =>
-      db.map(() => React.createRef()), // Create a new ref for each element in db
-    [db] // Recalculate when db changes
+      db.map(() => React.createRef()),
+    [db]
   );
+
+  const filteredDb = db.filter((user) => user.id !== userData.userId);
 
   const updateCurrentIndex = (val) => {
     setCurrentIndex(val);
@@ -63,13 +64,27 @@ function Advanced({ db }) {
 
   const randImg = 'https://pics.craiyon.com/2023-07-06/fabd5b7e86864d458a24a3624c7c7f23.webp';
 
+  const calculateAge = (birthDate) => {
+    const today = new Date();
+    const birth = new Date(birthDate);
+
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDifference = today.getMonth() - birth.getMonth();
+
+    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+
+    return age;
+  };
+
   return (
     <div className="wrap">
       <link href="https://fonts.googleapis.com/css?family=Damion&display=swap" rel="stylesheet" />
       <link href="https://fonts.googleapis.com/css?family=Alatsi&display=swap" rel="stylesheet" />
       <img className="logo" src={logo} />
       <div className="cardContainer">
-        {db.map((character, index) => (
+        {filteredDb.map((character, index) => (
           <TinderCard
             ref={childRefs[index]}
             className="swipe"
@@ -78,7 +93,15 @@ function Advanced({ db }) {
             onCardLeftScreen={() => outOfFrame(character.firstName, index)}
           >
             <div style={{ backgroundImage: 'url(' + randImg + ')' }} className="card">
-              <h3>{character.firstName}</h3>
+              {/* <h3>{character.firstName}</h3> */}
+              <div className="info">
+                <div className="info_name">
+                  {character.firstName} <div className="age">{calculateAge(character.birthDate)}</div>
+                </div>
+                <div className="info_city">
+                  <i className="fas fa-location-dot"></i> {character.city}
+                </div>
+              </div>
             </div>
           </TinderCard>
         ))}
@@ -94,6 +117,7 @@ function Advanced({ db }) {
           <i className="fas fa-heart"></i>
         </button>
       </div>
+      {/* {lastDirection} */}
       {/* {lastDirection ? (
         <h2 key={lastDirection} className="infoText">
           You swiped {lastDirection}

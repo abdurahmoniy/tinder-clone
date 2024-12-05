@@ -97,7 +97,7 @@ function App() {
           />
         )}
         <Routes>
-          <Route path="/" element={<Advanced db={db} />} />
+          <Route path="/" element={<Advanced userData={userData} db={db} />} />
           <Route path="/login" element={<Login setUserData={setUserData} setAuthMessage={setAuthMessage} />} />
           <Route path="/register" element={<Register setAuthMessage={setAuthMessage} />} />
           <Route path="/chat" element={<Chat db={db} userData={userData} setNavDisplay={setNavDisplay}/>} />
