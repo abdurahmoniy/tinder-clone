@@ -21,27 +21,32 @@ const Login = ({ setUserData, setAuthMessage }) => {
   
       const userData = response.data;
   
-      localStorage.setItem("authToken", userData.token);
+      // Extract the access token and store it
+      const accessToken = userData.data.accessToken;
+  
+      // Save access token and user data in localStorage
+      localStorage.setItem("authToken", accessToken);
       localStorage.setItem("userData", JSON.stringify(userData));
   
-      console.log("Logging in with", phoneNumber, password, response.data);
+      console.log("Logging in with", phoneNumber, password, userData);
       setAuthMessage({ text: 'Login successful! Welcome back.', status: 'success' });
-
+  
       setUserData(userData);
       navigate("/");
-
+  
       setTimeout(() => {
         setAuthMessage(null);
       }, 3000);
     } catch (error) {
       console.error("Login failed", error.response?.data || error.message);
       setAuthMessage({ text: 'Login failed: ' + (error.response?.data?.message || error.message), status: 'fail' });
-
+  
       setTimeout(() => {
         setAuthMessage(null);
       }, 5000);
     }
   };
+  
   
 
 

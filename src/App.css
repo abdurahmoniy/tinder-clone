@@ -31,6 +31,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   /* border: 1px solid #fff; */
   /* margin: 20px 0; */
   height: 100vh;
@@ -205,13 +206,19 @@ h2 {
 .chat {
   max-width: 350px;
   width: 100%;
-  height: 100vh;
+  max-height: 100vh;
+  height: 100%;
   margin: auto;
   color: #f8f9fa;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
+}
+
+.chat .chats-list{
+  overflow-y: auto;
 }
 
 .chat .title {

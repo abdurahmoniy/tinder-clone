@@ -8,34 +8,16 @@ import axios from 'axios';
 import Chat from './components/Chat';
 import UserProfile from './components/UserProfile';
 import api from './components/api';
+import Likes from './components/Likes';
+import Mylikes from './components/Mylikes';
 
 function App() {
   const nav = [
-    {
-      title: 'Home',
-      icon: 'fas fa-home',
-      path: '/',
-    },
-    {
-      title: 'Matches',
-      icon: 'fas fa-heart-circle-check',
-      path: '/matches',
-    },
-    {
-      title: 'Chat',
-      icon: 'fas fa-comment',
-      path: '/chat',
-    },
-    {
-      title: 'Likes',
-      icon: 'fas fa-heart',
-      path: '/likes',
-    },
-    {
-      title: 'Profile',
-      icon: 'fas fa-user',
-      path: '/profile',
-    },
+    { title: 'Home', icon: 'fas fa-home', path: '/' },
+    { title: 'My likes', icon: 'fas fa-heart-circle-check', path: '/mylikes' },
+    { title: 'Chat', icon: 'fas fa-comment', path: '/chat' },
+    { title: 'Likes', icon: 'fas fa-heart', path: '/likes' },
+    { title: 'Profile', icon: 'fas fa-user', path: '/profile' },
   ];
 
   const [db, setDb] = useState([]);
@@ -44,12 +26,13 @@ function App() {
   const [authMessage, setAuthMessage] = useState({ text: '', status: '' });
   const [messageClass, setMessageClass] = useState("");
   const [navDisplay, setNavDisplay] = useState(true);
+  const [currentPage, setCurrentPage] = useState(0);
 
   const getBgColor = () => {
     if (authMessage.status === 'success') return 'green';
     if (authMessage.status === 'fail') return 'red';
     return 'transparent';
-  }
+  };
 
   // Fetch stored user data from localStorage
   useEffect(() => {
@@ -60,22 +43,20 @@ function App() {
     setLoading(false);
   }, []);
 
-  // Fetch users from the API
+  // Fetch users for the current page
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await api.get('/users/all');
-        if (response.status === 200 && Array.isArray(response.data)) {
-          setDb(response.data);
-        } else {
-          console.error('Unexpected response format:', response.data);
-        }
+        const response = await api.get(`/users/get-all?page=${currentPage}&size=10`);
+        if (response.status === 200 && response.data.data.content.length > 0) {
+          setDb((prevDb) => [...prevDb, ...response.data.data.content]);
+        } 
       } catch (error) {
-        // console.error('Error fetching data:', error.message);
+        console.error('Error fetching users:', error.message);
       }
     };
     fetchUsers();
-  }, []);
+  }, [currentPage]);
 
   // Handle logout by clearing stored user data
   const handleLogout = () => {
@@ -97,25 +78,22 @@ function App() {
           />
         )}
         <Routes>
-          <Route path="/" element={<Advanced userData={userData} db={db} />} />
+          <Route path="/" element={<Advanced db={db} setCurrentPage={setCurrentPage} />} />
           <Route path="/login" element={<Login setUserData={setUserData} setAuthMessage={setAuthMessage} />} />
           <Route path="/register" element={<Register setAuthMessage={setAuthMessage} />} />
-          <Route path="/chat" element={<Chat db={db} userData={userData} setNavDisplay={setNavDisplay}/>} />
+          <Route path="/chat" element={<Chat db={db} userData={userData} setNavDisplay={setNavDisplay} />} />
+          <Route path="/mylikes" element={<Mylikes />} />
+          <Route path="/likes" element={<Likes />} />
           <Route
             path="/profile"
-            element={
-              userData ? (
-                <UserProfile userData={userData} setUserData={setUserData} handleLogout={handleLogout} />
-              ) : (
-                <Navigate to="/login" />
-              )
-            }
+            element={userData ? (
+              <UserProfile userData={userData} setUserData={setUserData} handleLogout={handleLogout} />
+            ) : (
+              <Navigate to="/login" />
+            )}
           />
         </Routes>
-        {navDisplay ? (
-          <Nav nav={nav} />
-        ) : ""
-        }
+        {navDisplay && <Nav nav={nav} />}
       </Router>
     </div>
   );
@@ -123,7 +101,6 @@ function App() {
 
 const Nav = ({ nav }) => {
   const location = useLocation();
-
   return (
     <div className="navigation">
       {nav.map((item, idx) => (

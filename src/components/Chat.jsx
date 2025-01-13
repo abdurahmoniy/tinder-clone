@@ -1,11 +1,30 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import api from "./api";
+import { useEffect } from "react";
 
-export default function Chat({ db, setNavDisplay, userData }) {
+export default function Chat({ setNavDisplay, userData }) {
   const [input, setInput] = useState("");
   const [currentUser, setCurrentUser] = useState(null);
   const [chats, setChats] = useState({});
   const [userIsActive, setUserIsActive] = useState(true);
+
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await api.get('/chats');
+        if (response.status === 200 && Array.isArray(response.data.data)) {
+          setData(response.data.data);
+        } else {
+          console.error('Unexpected response format:', response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error.message);
+      }
+    };
+    fetchUsers();
+  }, []);
 
   if (!currentUser) {
     setNavDisplay(true);
@@ -46,8 +65,6 @@ export default function Chat({ db, setNavDisplay, userData }) {
     }));
   };
 
-  const filteredDb = db.filter((user) => user.id !== userData.userId);
-
   return (
     <div className="chat">
       {/* {!currentUser ? (
@@ -61,8 +78,8 @@ export default function Chat({ db, setNavDisplay, userData }) {
             </Link>
           </div>
           <div className="searchbar">
-            <input 
-              type="search" 
+            <input
+              type="search"
               placeholder="Search..."
             />
             <i className="fas fa-search"></i>
@@ -72,31 +89,35 @@ export default function Chat({ db, setNavDisplay, userData }) {
             Chats
             <i className="fas fa-ellipsis"></i>
           </div>
-          {filteredDb.map((user) => (
-            <div
-              key={user.id}
-              className="user-item"
-              onClick={() => handleSelectUser(user)}
-            >
-              <div className="first">
-                <img
-                  src="https://as1.ftcdn.net/v2/jpg/03/46/83/96/1000_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
-                  alt=""
-                  className="user-avatar"
-                />
-                <div style={{ display: "block" }}>
-                  <div className="name">
-                    {user.firstName} {user.lastName}
+          <div className="chats-list">
+            {data.map((user) => (
+              <div
+                key={user.id}
+                className="user-item"
+                onClick={() => handleSelectUser(user)}
+              >
+                <div className="first">
+                  <img
+                    src="https://as1.ftcdn.net/v2/jpg/03/46/83/96/1000_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
+                    alt=""
+                    className="user-avatar"
+                  />
+                  <div style={{ display: "block" }}>
+                    <div className="name">
+                      {user.userFullName}
+                    </div>
+                    <div className="last-message">{user.lastMessage}</div>
                   </div>
-                  <div className="last-message">Last message</div>
+                </div>
+                <div className="last">
+                  <div className="last-chat">15 min</div>
+                  {user.newMessagesCount == 0 ? '' : (
+                    <div className="new-message">{user.newMessagesCount}</div>
+                  )}
                 </div>
               </div>
-              <div className="last">
-                <div className="last-chat">15 min</div>
-                <div className="new-message">2</div>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       ) : (
         <div className="chat-window">
@@ -111,7 +132,7 @@ export default function Chat({ db, setNavDisplay, userData }) {
                 className="user-avatar"
               />
               <div className="nameTitle">
-                {currentUser.firstName}
+                {currentUser.userFullName}
                 {userIsActive && (
                   <div className="isActive">
                     <i className="fas fa-circle-dot activeDot"></i>
@@ -126,9 +147,8 @@ export default function Chat({ db, setNavDisplay, userData }) {
             {chats[currentUser.id]?.map((msg, idx) => (
               <div
                 key={idx}
-                className={`message ${
-                  msg.sender === "user" ? "user" : "bot"
-                }`}
+                className={`message ${msg.sender === "user" ? "user" : "bot"
+                  }`}
               >
                 {msg.text}
               </div>

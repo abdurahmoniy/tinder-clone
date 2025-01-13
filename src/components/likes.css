@@ -1,0 +1,90 @@
+/* Main container */
+.likes-cont {
+    max-height: 85vh;
+    width: 350px;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* title */
+.likes-title{
+    font-size: 22px;
+    font-weight: bold;
+    color: #fff;
+    padding: 10px 0;
+}
+
+/* Style for each user item */
+.liked-user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.liked-user-item:hover {
+    transform: scale(1.02); /* Slight zoom on hover */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+}
+
+/* Left section (avatar and name) */
+.liked-first {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Avatar styling */
+.liked-user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover; /* Ensure image scales properly */
+    border: 2px solid #ddd; /* Border around the avatar */
+}
+
+/* Name and last message */
+.name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff; /* Dark text for better readability */
+}
+
+.liked-last-message {
+    font-size: 14px;
+    color: #777; /* Lighter text color for messages */
+}
+
+/* Right section (time and message count) */
+.liked-last {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+/* Time of last chat */
+.liked-last-chat {
+    font-size: 12px;
+    color: #aaa; /* Light gray text for time */
+}
+
+/* New messages badge */
+.liked-new-message {
+    background-color: #ff5f54; /* Bright red for visibility */
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 15px;
+    text-align: center;
+    min-width: 20px;
+}

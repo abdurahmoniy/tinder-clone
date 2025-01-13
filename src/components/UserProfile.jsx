@@ -7,6 +7,8 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
     const [editedUserData, setEditedUserData] = useState(userData);
     const [currentUserData, setCurrentUserData] = useState(null);
 
+    
+
     // Sync editedUserData with userData prop
     useEffect(() => {
         setEditedUserData(userData);
@@ -16,9 +18,8 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await api.get(`/users/${userData.userId}`);
-                setCurrentUserData(response.data);
-                // console.log(response.data)
+                const response = await api.get(`/users/me`);
+                setCurrentUserData(response.data.data);
             } catch (error) {
                 console.error('Error fetching user data:', error);
             }
@@ -39,9 +40,9 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
         e.preventDefault();
 
         try {
-            const response = await api.put(`/users/${userData.userId}`, editedUserData);
+            const response = await api.put(`/users/update-me`, editedUserData);
 
-            const updatedData = { ...userData, ...response.data }; // Merge response with existing userData
+            const updatedData = { ...userData, ...response.data.data }; // Merge response with existing userData
             setUserData(updatedData); // Update parent state
             setCurrentUserData(updatedData); // Sync currentUserData
             localStorage.setItem('userData', JSON.stringify(updatedData));
