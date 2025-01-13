@@ -13,7 +13,7 @@ export default function Chat({ setNavDisplay, userData }) {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await api.get('/chats');
+        const response = await api.get('/chats/my');
         if (response.status === 200 && Array.isArray(response.data.data)) {
           setData(response.data.data);
         } else {

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 
 #root {
   /* text-align: center; */
@@ -42,14 +42,14 @@
   flex-direction: row !important;
 }
 
-.row>* {
+.row > * {
   margin: 5px;
 }
 
 h1 {
-  font-family: 'Damion', cursive;
+  font-family: "Damion", cursive;
   color: #fff;
-  text-shadow: 0px 0px 60px 0px rgba(0, 0, 0, 0.30);
+  text-shadow: 0px 0px 60px 0px rgba(0, 0, 0, 0.3);
 }
 
 h2 {
@@ -112,7 +112,7 @@ h2 {
 }
 
 .buttons button {
-  transition: .1s ease-in;
+  transition: 0.1s ease-in;
   border: none;
 }
 
@@ -147,31 +147,31 @@ h2 {
 
 @keyframes popup {
   0% {
-    transform: scale(1, 1)
+    transform: scale(1, 1);
   }
 
   10% {
-    transform: scale(1.1, 1.1)
+    transform: scale(1.1, 1.1);
   }
 
   30% {
-    transform: scale(.9, .9)
+    transform: scale(0.9, 0.9);
   }
 
   50% {
-    transform: scale(1, 1)
+    transform: scale(1, 1);
   }
 
   57% {
-    transform: scale(1, 1)
+    transform: scale(1, 1);
   }
 
   64% {
-    transform: scale(1, 1)
+    transform: scale(1, 1);
   }
 
   100% {
-    transform: scale(1, 1)
+    transform: scale(1, 1);
   }
 }
 
@@ -200,7 +200,7 @@ h2 {
 
 .navigation .nav_item.active {
   color: #fe5858;
-  transition: .5s ease;
+  transition: 0.5s ease;
 }
 
 .chat {
@@ -217,7 +217,7 @@ h2 {
   position: relative;
 }
 
-.chat .chats-list{
+.chat .chats-list {
   overflow-y: auto;
 }
 
@@ -426,7 +426,6 @@ h2 {
   color: rgb(53, 255, 53);
   font-size: 8px;
   /* background: green; */
-
 }
 
 .gender-input {
@@ -478,7 +477,6 @@ h2 {
   /* Red for failure */
 }
 
-
 .info {
   position: absolute;
   color: #fff;
@@ -496,7 +494,17 @@ h2 {
 
 .age {
   padding-left: 15px;
+  padding-right: 20px;
   color: #b2b2b2;
+  position: relative;
+}
+
+.age-text {
+  position: absolute;
+  top: -12px;
+  right: 0;
+  font-size: 10px;
+  font-weight: bold;
 }
 
 .info_city {
@@ -517,7 +525,7 @@ h2 {
   color: #fff;
 }
 
-.searchbar{
+.searchbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -535,7 +543,7 @@ h2 {
   width: 100%;
 }
 
-.searchbar input::placeholder{
+.searchbar input::placeholder {
   color: #fff;
 }
 

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import "./Register.css";
-import Logo from '../img/logo.png';
+import Logo from "../img/logo.png";
 import api from "./api";
 import { useNavigate } from "react-router-dom";
+import { locationsData } from "../locations/regions";
 
 const RegisterPage = ({ setAuthMessage }) => {
   const [phoneNumber, setPhoneNumber] = useState("+998");
@@ -14,34 +15,52 @@ const RegisterPage = ({ setAuthMessage }) => {
   const [city, setCity] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [region, setRegion] = useState("");
+  const [district, setDistrict] = useState("");
+  const [districts, setDistricts] = useState([]);
 
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-  
+
     if (password !== confirmPassword) {
-      setAuthMessage({ text: 'Passwords do not match!', status: 'fail' });
+      setAuthMessage({ text: "Passwords do not match!", status: "fail" });
       return;
     }
-  
+
     setIsSubmitting(true);
     try {
       const response = await api.post("/auth/register", {
-        phoneNumber, password, firstName, lastName, birthDate, gender, city
+        phoneNumber,
+        password,
+        firstName,
+        lastName,
+        birthDate,
+        gender,
+        region,
+        district,
       });
       console.log("Registration successful:", response.data);
-      setAuthMessage({ text: 'Registration successful! You can Log in.', status: 'success' });
-      navigate('/login');
+      setAuthMessage({
+        text: "Registration successful! You can Log in.",
+        status: "success",
+      });
+      navigate("/login");
     } catch (error) {
       console.error("Registration failed:", error);
-  
+
       if (error.response?.status === 500) {
-        setAuthMessage({ text: 'This Phone number is already registered.', status: 'fail' });
+        setAuthMessage({
+          text: "This Phone number is already registered.",
+          status: "fail",
+        });
       } else {
         setAuthMessage({
-          text: 'Registration failed: ' + (error.response?.data?.message || error.message),
-          status: 'fail',
+          text:
+            "Registration failed: " +
+            (error.response?.data?.message || error.message),
+          status: "fail",
         });
       }
     } finally {
@@ -51,7 +70,18 @@ const RegisterPage = ({ setAuthMessage }) => {
       }, 5000);
     }
   };
-  
+
+  const handleRegionChange = (e) => {
+    const selectedRegion = e.target.value;
+    setRegion(selectedRegion);
+
+    const selectedRegionData = locationsData.find(
+      (location) => location.region === selectedRegion
+    );
+    setDistricts(
+      selectedRegionData ? Object.entries(selectedRegionData.districts) : []
+    );
+  };
 
   return (
     <div className="register-container">
@@ -103,14 +133,6 @@ const RegisterPage = ({ setAuthMessage }) => {
         />
         <input
           className="register-input"
-          type="text"
-          required
-          placeholder="City"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-        />
-        <input
-          className="register-input"
           type="date"
           required
           placeholder="Birth Date"
@@ -128,8 +150,38 @@ const RegisterPage = ({ setAuthMessage }) => {
           <option value="MALE">MALE</option>
           <option value="FEMALE">FEMALE</option>
         </select>
-        <button className="register-button" type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Registering...' : 'Register'}
+        <select
+          className="gender-input"
+          name="regions"
+          onChange={handleRegionChange}
+        >
+          <option value="">Select region</option>
+          {locationsData?.map((region) => (
+            <option key={region.region} value={region.region}>
+              {region.region}
+            </option>
+          ))}
+        </select>
+        <select
+          className="gender-input"
+          name="districts"
+          onChange={(e) => setDistrict(e.target.value)} // set the district value, not the key
+        >
+          <option value="">Select district</option>
+          {districts?.map(([districtKey, districtName]) => (
+            <option key={districtKey} value={districtName}>
+              {" "}
+              {/* Use district name as the value */}
+              {districtName}
+            </option>
+          ))}
+        </select>
+        <button
+          className="register-button"
+          type="submit"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Registering..." : "Register"}
         </button>
       </form>
       <p className="sign-in-link">
