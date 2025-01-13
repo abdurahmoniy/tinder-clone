@@ -1,4 +1,6 @@
 export const locationsData = [
+
+  
   {
     region: "Tashkent city",
     districts: {
