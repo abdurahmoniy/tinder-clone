@@ -11,6 +11,7 @@ function Advanced({ db = [], setCurrentPage }) {
   const navigate = useNavigate();
   const [userDetail, setUserDetail] = useState({});
   const [detailModal, setDetailModal] = useState(false);
+  const [actionMessage, setActionMessage] = useState(""); // New state for action message
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -37,7 +38,6 @@ function Advanced({ db = [], setCurrentPage }) {
 
   const swiped = async (direction, nameToDelete, index, user) => {
     if (currentIndex >= db.length - 1) {
-      // Prevent actions for the last user
       return;
     }
 
@@ -48,12 +48,21 @@ function Advanced({ db = [], setCurrentPage }) {
       try {
         await api.post(`/likes`, { userId: user.id });
         console.log(`User ${user.firstName} (ID: ${user.id}) liked!`);
+        setActionMessage("You liked!"); // Set action message for like
+
+        setTimeout(() => setActionMessage(""), 1000); // Clear message after 1 second
       } catch (error) {
         console.error("Error liking user:", error);
       }
     }
 
     setCurrentPage((prevPage) => prevPage + 1);
+  };
+
+  // Inside the buttons' onClick handlers
+  const handleMessage = (message) => {
+    setActionMessage(message); // Set the message
+    setTimeout(() => setActionMessage(""), 1000); // Clear message after 1 second
   };
 
   const outOfFrame = (name, idx) => {
@@ -155,9 +164,24 @@ function Advanced({ db = [], setCurrentPage }) {
             </TinderCard>
           ))
         ) : (
-          <p>No users available</p>
+          <div className="users-finished">
+            <div className="snowflakes" aria-hidden="true">
+              <img src="logo.png" alt="logo" className="snowflake" />
+              <img src="logo.png" alt="logo" className="snowflake" />
+              <img src="logo.png" alt="logo" className="snowflake" />
+              <img src="logo.png" alt="logo" className="snowflake" />
+              <img src="logo.png" alt="logo" className="snowflake" />
+
+              <img src="logo.png" alt="logo" className="snowflake" />
+              <img src="logo.png" alt="logo" className="snowflake" />
+              <img src="logo.png" alt="logo" className="snowflake" />
+              <img src="logo.png" alt="logo" className="snowflake" />
+              <img src="logo.png" alt="logo" className="snowflake" />
+            </div>
+            <p className="users-finished-message">Users Finished</p>
+          </div>
         )}
-        {currentIndex >= db.length - 1 && <p>Users Finished</p>}
+        {/* {currentIndex >= db.length - 1 && <p>Users Finished</p>} */}
       </div>
 
       {/* Buttons */}
@@ -165,7 +189,10 @@ function Advanced({ db = [], setCurrentPage }) {
         <button
           className="dislike"
           style={{ backgroundColor: "#c3c4d3" }}
-          onClick={() => swipe("left")}
+          onClick={() => {
+            swipe("left");
+            handleMessage("Skipped"); // Call handleMessage with the desired message
+          }}
           disabled={currentIndex >= db.length - 1} // Disable for the last card
         >
           <i className="fas fa-heart-crack"></i>
@@ -184,16 +211,14 @@ function Advanced({ db = [], setCurrentPage }) {
           onClick={async () => {
             if (db[currentIndex]) {
               const user = db[currentIndex];
-              // Send the like request
               try {
                 await api.post("/likes", { userId: user.id });
                 console.log(`User ${user.firstName} (ID: ${user.id}) liked!`);
+                handleMessage("You liked!"); // Call handleMessage with the desired message
               } catch (error) {
                 console.error("Error liking user:", error);
               }
             }
-
-            // Swipe to the next card after liking
             swipe("right");
             setCurrentPage((prevPage) => prevPage + 1);
           }}
@@ -202,6 +227,10 @@ function Advanced({ db = [], setCurrentPage }) {
           <i className="fas fa-heart"></i>
         </button>
       </div>
+
+      {actionMessage && (
+        <p className="action-message">{actionMessage}</p> // Display the action message
+      )}
 
       {detailModal && (
         <div onClick={() => setDetailModal(false)} className="detail-modal">

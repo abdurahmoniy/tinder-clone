@@ -135,6 +135,12 @@ function App() {
 
 const Nav = ({ nav }) => {
   const location = useLocation();
+
+  // Agar pathname /login yoki /register bo'lsa, komponentni ko'rsatmaymiz
+  if (location.pathname === "/login" || location.pathname === "/register") {
+    return null;
+  }
+
   return (
     <div className="navigation">
       {nav.map((item, idx) => (

@@ -5,9 +5,10 @@ import "./Profile.css";
 import api from "./api";
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
+import Loader from "./Loader";
 
 const UserProfile = ({ userData, setUserData, handleLogout }) => {
-  const [isEditing, setIsEditing] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   const [editedUserData, setEditedUserData] = useState(userData);
   const [currentUserData, setCurrentUserData] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -21,27 +22,51 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
   const [interestInput, setInterestInput] = useState("");
   const [languageInput, setLanguageInput] = useState("");
 
+  // Interests bo'limini to'g'irlash
   const handleInterestAdd = () => {
     if (interestInput && !interests.includes(interestInput)) {
-      setInterests([...interests, interestInput]);
-      setInterestInput("");
-    }
-  };
-
-  const handleLanguageAdd = () => {
-    if (languageInput && !languages.includes(languageInput)) {
-      setLanguages([...languages, languageInput]);
-      setLanguageInput("");
+      setInterests((prev) => [...prev, interestInput]);
+      setInterestInput(""); // Inputni tozalash
     }
   };
 
   const handleInterestRemove = (interest) => {
-    setInterests(interests.filter((item) => item !== interest));
+    setInterests((prev) => prev.filter((item) => item !== interest)); // Interestni olib tashlash
+  };
+
+  // Languages bo'limini to'g'irlash
+  const handleLanguageAdd = () => {
+    if (languageInput && !languages.includes(languageInput)) {
+      setLanguages((prev) => [...prev, languageInput]);
+      setLanguageInput(""); // Inputni tozalash
+    }
   };
 
   const handleLanguageRemove = (language) => {
-    setLanguages(languages.filter((item) => item !== language));
+    setLanguages((prev) => prev.filter((item) => item !== language)); // Language'ni olib tashlash
   };
+
+  // const handleInterestAdd = () => {
+  //   if (interestInput && !interests.includes(interestInput)) {
+  //     setInterests([...interests, interestInput]);
+  //     setInterestInput("");
+  //   }
+  // };
+
+  // const handleLanguageAdd = () => {
+  //   if (languageInput && !languages.includes(languageInput)) {
+  //     setLanguages([...languages, languageInput]);
+  //     setLanguageInput("");
+  //   }
+  // };
+
+  // const handleInterestRemove = (interest) => {
+  //   setInterests(interests.filter((item) => item !== interest));
+  // };
+
+  // const handleLanguageRemove = (language) => {
+  //   setLanguages(languages.filter((item) => item !== language));
+  // };
 
   useEffect(() => {
     setEditedUserData(userData);
@@ -141,44 +166,19 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
     );
   };
 
-  // edit form datas
-
-  // {
-  //   "success": true,
-  //   "message": "string",
-  //   "data": {
-  //     "id": 0,
-  //     "firstName": "string",
-  //     "lastName": "string",
-  //     "phoneNumber": "string",
-  //     "username": "string",
-  //     "age": 0,
-  //     "birthDate": "2025-01-13",
-  //     "gender": "MALE",
-  //     "lastActiveTime": "2025-01-13T13:28:56.687Z",
-  //     "bio": "string",
-  //     "bioVisibility": true,
-  //     "region": "string",
-  //     "district": "string",
-  //     "showMeOnTinder": true,
-  //     "minAgePreference": 0,
-  //     "maxAgePreference": 0,
-  //     "agePreferenceVisibility": true,
-  //     "global": true,
-  //     "appearanceMode": "DARK",
-  //     "education": "string",
-  //     "interestedIn": "MALE",
-  //     "profilePictures": [
-  //       "string"
-  //     ],
-  //     "interests": [
-  //       "string"
-  //     ],
-  //     "languages": [
-  //       "string"
-  //     ]
-  //   }
-  // }
+  const handleDeleteProfilePicture = async () => {
+    try {
+      const response = await api.delete(`/files/delete-photo`);
+      if (response.data.success) {
+        const updatedUserData = { ...currentUserData, profilePicture: null };
+        setCurrentUserData(updatedUserData);
+        setUserData(updatedUserData);
+        localStorage.setItem("userData", JSON.stringify(updatedUserData));
+      }
+    } catch (error) {
+      console.error("Error deleting profile picture:", error);
+    }
+  };
 
   return (
     <div className="profile_container">
@@ -188,7 +188,7 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
       <div className="prof_wrap">
         <div className="profile-info">
           {isEditing ? (
-            <form onSubmit={handleSubmit}>
+            <form className="profile-edit-form" onSubmit={handleSubmit}>
               {/* first name */}
               <div className="prof_edit">
                 <input
@@ -211,56 +211,6 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
                 />
               </div>
 
-              {/* phone number */}
-              <div className="prof_edit">
-                <input
-                  type="text"
-                  name="phoneNumber"
-                  placeholder="Phone Number"
-                  value={editedUserData.phoneNumber || ""}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              {/* age */}
-              <div className="prof_edit">
-                <input
-                  type="number"
-                  name="age"
-                  placeholder="Age"
-                  value={editedUserData?.age || ""}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              {/* age preference visibility */}
-              <div className="prof_edit_checkbox">
-                <label htmlFor="agePreferenceVisibility">
-                  Age Preference Visibility
-                </label>
-                <div>
-                  <input
-                    type="radio"
-                    name="agePreferenceVisibility"
-                    value="true"
-                    checked={editedUserData.agePreferenceVisibility === "true"}
-                    onChange={handleInputChange}
-                  />
-                  <label>Public</label>
-                </div>
-
-                <div>
-                  <input
-                    type="radio"
-                    name="agePreferenceVisibility"
-                    value="false"
-                    checked={editedUserData.agePreferenceVisibility === "false"}
-                    onChange={handleInputChange}
-                  />
-                  <label>Private</label>
-                </div>
-              </div>
-
               {/* bio */}
               <div className="prof_edit">
                 <input
@@ -280,8 +230,13 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
                     type="radio"
                     name="bioVisibility"
                     value="true"
-                    checked={editedUserData.bioVisibility === "true"}
-                    onChange={handleInputChange}
+                    checked={editedUserData.bioVisibility === true}
+                    onChange={(e) =>
+                      setEditedUserData((prev) => ({
+                        ...prev,
+                        bioVisibility: e.target.value === "true",
+                      }))
+                    }
                   />
                   <label>Public</label>
                 </div>
@@ -291,8 +246,13 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
                     type="radio"
                     name="bioVisibility"
                     value="false"
-                    checked={editedUserData.bioVisibility === "false"}
-                    onChange={handleInputChange}
+                    checked={editedUserData.bioVisibility === false}
+                    onChange={(e) =>
+                      setEditedUserData((prev) => ({
+                        ...prev,
+                        bioVisibility: e.target.value === "true",
+                      }))
+                    }
                   />
                   <label>Private</label>
                 </div>
@@ -304,9 +264,58 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
                   type="date"
                   name="birthDate"
                   placeholder="Birth day"
-                  value={editedUserData.birthDate || ""}
-                  onChange={handleInputChange}
+                  value={
+                    editedUserData.birthDate
+                      ? editedUserData.birthDate.replace(/\./g, "-") // Display in YYYY-MM-DD format
+                      : ""
+                  }
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // If the value is in the format YYYY-MM-DD, convert it to YYYY.MM.DD
+                    const formattedDate = value ? value.replace(/-/g, ".") : "";
+                    handleInputChange({
+                      target: { name: "birthDate", value: formattedDate },
+                    });
+                  }}
                 />
+              </div>
+
+              {/* age preference visibility */}
+              <div className="prof_edit_checkbox">
+                <label htmlFor="agePreferenceVisibility">
+                  Age Preference Visibility
+                </label>
+                <div>
+                  <input
+                    type="radio"
+                    name="agePreferenceVisibility"
+                    value="true"
+                    checked={editedUserData.agePreferenceVisibility === true}
+                    onChange={(e) =>
+                      setEditedUserData((prev) => ({
+                        ...prev,
+                        agePreferenceVisibility: e.target.value === "true",
+                      }))
+                    }
+                  />
+                  <label>Public</label>
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    name="agePreferenceVisibility"
+                    value="false"
+                    checked={editedUserData.agePreferenceVisibility === false}
+                    onChange={(e) =>
+                      setEditedUserData((prev) => ({
+                        ...prev,
+                        agePreferenceVisibility: e.target.value === "true",
+                      }))
+                    }
+                  />
+                  <label>Private</label>
+                </div>
               </div>
 
               {/* gender */}
@@ -351,54 +360,6 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
                 ))}
               </select>
 
-              {/* show me on Tinder */}
-              <div className="prof_edit_checkbox">
-                <label htmlFor="showMeOnTinder">Show Me on Tinder</label>
-                <div>
-                  <input
-                    type="radio"
-                    name="showMeOnTinder"
-                    value="true"
-                    checked={editedUserData.showMeOnTinder === "true"}
-                    onChange={handleInputChange}
-                  />
-                  <label>Yes</label>
-                </div>
-
-                <div>
-                  <input
-                    type="radio"
-                    name="showMeOnTinder"
-                    value="false"
-                    checked={editedUserData.showMeOnTinder === "false"}
-                    onChange={handleInputChange}
-                  />
-                  <label>No</label>
-                </div>
-              </div>
-
-              {/* min age preference */}
-              <div className="prof_edit">
-                <input
-                  type="number"
-                  name="minAgePreference"
-                  placeholder="Min age preference"
-                  value={editedUserData?.minAgePreference || ""}
-                  onChange={handleInputChange}
-                />
-              </div>
-
-              {/* max age preference */}
-              <div className="prof_edit">
-                <input
-                  type="number"
-                  name="maxAgePreference"
-                  placeholder="Max age preference"
-                  value={editedUserData?.minAgePreference || ""}
-                  onChange={handleInputChange}
-                />
-              </div>
-
               {/* show me on Tinder (global) */}
               <div className="prof_edit_checkbox">
                 <label htmlFor="showMeOnTinder">
@@ -409,8 +370,13 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
                     type="radio"
                     name="showMeOnTinder"
                     value="true"
-                    checked={editedUserData.showMeOnTinder === "true"}
-                    onChange={handleInputChange}
+                    checked={editedUserData.showMeOnTinder === true}
+                    onChange={(e) =>
+                      setEditedUserData((prev) => ({
+                        ...prev,
+                        showMeOnTinder: e.target.value === "true",
+                      }))
+                    }
                   />
                   <label>Yes</label>
                 </div>
@@ -420,8 +386,13 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
                     type="radio"
                     name="showMeOnTinder"
                     value="false"
-                    checked={editedUserData.showMeOnTinder === "false"}
-                    onChange={handleInputChange}
+                    checked={editedUserData.showMeOnTinder === false}
+                    onChange={(e) =>
+                      setEditedUserData((prev) => ({
+                        ...prev,
+                        showMeOnTinder: e.target.value === "true",
+                      }))
+                    }
                   />
                   <label>No</label>
                 </div>
@@ -443,22 +414,32 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
                 <label htmlFor="interestedIn">Interested In</label>
                 <div>
                   <input
-                    type="checkbox"
+                    type="radio"
                     name="interestedIn"
                     value="MALE"
-                    checked={editedUserData.interestedIn?.includes("MALE")}
-                    onChange={handleInputChange}
+                    checked={editedUserData.interestedIn === "MALE"}
+                    onChange={(e) =>
+                      setEditedUserData((prev) => ({
+                        ...prev,
+                        interestedIn: e.target.value,
+                      }))
+                    }
                   />
                   <label>Male</label>
                 </div>
 
                 <div>
                   <input
-                    type="checkbox"
+                    type="radio"
                     name="interestedIn"
                     value="FEMALE"
-                    checked={editedUserData.interestedIn?.includes("FEMALE")}
-                    onChange={handleInputChange}
+                    checked={editedUserData.interestedIn === "FEMALE"}
+                    onChange={(e) =>
+                      setEditedUserData((prev) => ({
+                        ...prev,
+                        interestedIn: e.target.value,
+                      }))
+                    }
                   />
                   <label>Female</label>
                 </div>
@@ -525,8 +506,19 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
               </div>
 
               <div className="action-btn">
-                <button type="submit">Save Changes</button>
-                <button type="button" onClick={handleCancel}>
+                <button
+                  style={{ backgroundColor: "#007bff" }}
+                  className="edit-profile-save-btn"
+                  type="submit"
+                >
+                  Save Changes
+                </button>
+                <button
+                  style={{ backgroundColor: "#dc3545" }}
+                  className="edit-profile-cancel-btn"
+                  type="button"
+                  onClick={handleCancel}
+                >
                   Cancel
                 </button>
               </div>
@@ -537,7 +529,7 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
                 <img
                   src={
                     currentUserData?.profilePictures == null
-                      ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvIDLyE2qiXbONA33TsxXBaa9vUEn3VxXw3A&s"
+                      ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTr3jhpAFYpzxx39DRuXIYxNPXc0zI5F6IiMQ&s"
                       : currentUserData?.profilePictures[
                           currentUserData?.profilePictures?.length - 1
                         ]
@@ -576,9 +568,20 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
                 </div>
               </div>
               <div className="prof_info">
-                <div>Phone Number: {currentUserData.phoneNumber || "N/A"}</div>
+                {/* <div>Phone Number: {currentUserData.phoneNumber || "N/A"}</div> */}
                 <div>Birthday: {currentUserData.birthDate || "N/A"}</div>
                 <div>Gender: {currentUserData.gender || "N/A"}</div>
+                {currentUserData?.education && (
+                  <div>Education: {currentUserData?.education}</div>
+                )}
+                {currentUserData?.languages?.length > 0 && (
+                  <div>
+                    Languages:
+                    {currentUserData?.languages?.map((item) => {
+                      <span>{item}</span>;
+                    })}
+                  </div>
+                )}
                 <div>
                   Location: {currentUserData?.region || ""},{" "}
                   {currentUserData?.district || ""}
@@ -586,11 +589,16 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
               </div>
               <div className="action-btn">
                 <button onClick={handleLogout}>Logout</button>
-                <button onClick={() => setIsEditing(true)}>Edit Profile</button>
+                <button
+                  style={{ backgroundColor: "#007bff" }}
+                  onClick={() => setIsEditing(true)}
+                >
+                  Edit Profile
+                </button>
               </div>
             </div>
           ) : (
-            <div>Loading...</div>
+            <Loader />
           )}
         </div>
       </div>
