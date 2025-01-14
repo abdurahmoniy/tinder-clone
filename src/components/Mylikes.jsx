@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { FaRegHeart, FaTimesCircle } from "react-icons/fa"; // except and reject icons
 import api from "./api";
-import "./likes.css";
+import Loader from "./Loader";
 
 export default function Mylikes() {
   const [data, setData] = useState([]);
   const [userDetail, setUserDetail] = useState({});
   const [detailModal, setDetailModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState(""); // State for toast message
 
   const fetchUsers = async () => {
     try {
@@ -20,6 +22,8 @@ export default function Mylikes() {
       }
     } catch (error) {
       console.error("Error fetching data:", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -31,6 +35,8 @@ export default function Mylikes() {
     try {
       const response = await api.post("/likes", { userId });
       if (response.status === 200) {
+        setToast("User liked successfully!"); // Set the toast message
+        setTimeout(() => setToast(""), 2000); // Hide after 2 seconds
         console.log("User liked");
       }
     } catch (error) {
@@ -42,6 +48,8 @@ export default function Mylikes() {
     try {
       const response = await api.delete("/likes", { data: { userId } });
       if (response.status === 200) {
+        setToast("User rejected successfully!"); // Set the toast message
+        setTimeout(() => setToast(""), 2000); // Hide after 2 seconds
         console.log("User rejected");
         fetchUsers();
       }
@@ -54,54 +62,78 @@ export default function Mylikes() {
     "https://as1.ftcdn.net/v2/jpg/03/46/83/96/1000_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg";
 
   return (
-    <div className="likes-wrap">
-      <div className="likes-title">Liked users</div>
-      <div className="likes-cont">
-        {data.map((user, index) => {
-          const userImage = user.profilePictures?.[0] || defaultImage;
+    <div style={{ height: "70%", padding: "20px" }} className="likes-wrap">
+      {/* Toast Notification */}
+      {toast && (
+        <div className="toast">
+          <p>{toast}</p>
+        </div>
+      )}
 
-          return (
-            <div key={user.id} className="liked-user-item">
-              <div className="liked-first">
-                <div
-                  onClick={() => {
-                    setUserDetail(user);
-                    setDetailModal(true);
-                  }}
-                  style={{ display: "flex", alignItems: "center", gap: 10 }}
-                >
-                  <img
-                    src={userImage}
-                    alt={`${user.firstName} ${user.lastName}`}
-                    className="liked-user-avatar"
-                  />
-                  <div className="name">
-                    {user.firstName} {user.lastName}
+      <div className="likes-title">Liked users</div>
+
+      {loading ? (
+        <div className="loader-wrap">
+          <Loader />
+        </div>
+      ) : data.length === 0 ? (
+        <div className="users-finished">
+          <div className="snowflakes" aria-hidden="true">
+            {[...Array(10)].map((_, idx) => (
+              <img key={idx} src="logo.png" alt="logo" className="snowflake" />
+            ))}
+          </div>
+          <p className="users-finished-message">You have no likes</p>
+        </div>
+      ) : (
+        <div className="likes-cont">
+          {data.map((user) => {
+            const userImage = user.profilePictures?.[0] || defaultImage;
+
+            return (
+              <div key={user.id} className="liked-user-item">
+                <div className="liked-first">
+                  <div
+                    onClick={() => {
+                      setUserDetail(user);
+                      setDetailModal(true);
+                    }}
+                    style={{ display: "flex", alignItems: "center", gap: 10 }}
+                  >
+                    <img
+                      src={userImage}
+                      alt={`${user.firstName} ${user.lastName}`}
+                      className="liked-user-avatar"
+                    />
+                    <div className="name">
+                      {user.firstName} {user.lastName}
+                    </div>
+                  </div>
+                  <div
+                    style={{ display: "flex", gap: 10 }}
+                    className="liked-actions"
+                  >
+                    <button
+                      onClick={() => handleLike(user.id)}
+                      className="liked-action-btn"
+                    >
+                      <FaRegHeart className="liked-action-btn" />
+                    </button>
+                    <button
+                      onClick={() => handleReject(user.id)}
+                      className="liked-action-btn reject"
+                    >
+                      <FaTimesCircle className="reject" />
+                    </button>
                   </div>
                 </div>
-                <div
-                  style={{ display: "flex", gap: 10 }}
-                  className="liked-actions"
-                >
-                  <button
-                    onClick={() => handleLike(user.id)}
-                    className="liked-action-btn"
-                  >
-                    <FaRegHeart className="liked-action-btn" />
-                  </button>
-                  <button
-                    onClick={() => handleReject(user.id)}
-                    className="liked-action-btn reject"
-                  >
-                    <FaTimesCircle className="reject" />
-                  </button>
-                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
 
+      {/* Detail Modal */}
       {detailModal && (
         <div onClick={() => setDetailModal(false)} className="detail-modal">
           <div

@@ -553,3 +553,120 @@ h2 {
 .searchbar i {
   padding: 0 5px;
 }
+
+.users-finished {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  height: 700px; /* O'zingizning balandlikni tanlang */
+  overflow: hidden;
+}
+
+.users-finished-message {
+  color: #fff;
+  font-size: 28px;
+  font-family: "Fira Sans", sans-serif;
+  font-weight: 200;
+  font-style: normal;
+  cursor: pointer;
+  text-align: center;
+  margin-top: 50px;
+  z-index: 10;
+}
+
+.snowflakes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 200%;
+  pointer-events: none; /* Elementni bosish imkoniyatini o'chirish */
+  z-index: 1;
+}
+
+.snowflake {
+  position: absolute;
+  top: -50px; /* Qor parchasi tepadan boshlanadi */
+  width: 70px; /* Qor parchasi o'lchami */
+  animation: fall linear infinite;
+  opacity: 0.8; /* Biroz shaffoflik qo'shish */
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    left: random(-10%, 110%);
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+  }
+}
+
+.snowflake:nth-child(1) {
+  left: 10%;
+  animation-duration: 10s;
+  animation-delay: 0s;
+}
+
+.snowflake:nth-child(2) {
+  left: 30%;
+  animation-duration: 12s;
+  animation-delay: 2s;
+}
+
+.snowflake:nth-child(3) {
+  left: 50%;
+  animation-duration: 8s;
+  animation-delay: 4s;
+}
+
+.snowflake:nth-child(4) {
+  left: 70%;
+  animation-duration: 14s;
+  animation-delay: 6s;
+}
+
+.snowflake:nth-child(5) {
+  left: 90%;
+  animation-duration: 11s;
+  animation-delay: 8s;
+}
+
+.snowflake:nth-child(6) {
+  left: 20%;
+  animation-duration: 9s;
+  animation-delay: 10s;
+}
+
+.snowflake:nth-child(7) {
+  left: 40%;
+  animation-duration: 13s;
+  animation-delay: 12s;
+}
+
+.snowflake:nth-child(8) {
+  left: 60%;
+  animation-duration: 15s;
+  animation-delay: 14s;
+}
+
+.snowflake:nth-child(9) {
+  left: 80%;
+  animation-duration: 11s;
+  animation-delay: 16s;
+}
+
+.snowflake:nth-child(10) {
+  left: 0%;
+  animation-duration: 12s;
+  animation-delay: 18s;
+}
+
+.action-message {
+  color: white;
+  font-weight: 500;
+}
+
