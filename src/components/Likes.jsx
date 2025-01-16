@@ -127,6 +127,7 @@ export default function Likes() {
         </div>
       )}
 
+      {/* details modal */}
       {detailModal && (
         <div onClick={() => setDetailModal(false)} className="detail-modal">
           <div
@@ -144,11 +145,13 @@ export default function Likes() {
               <div className="detail-modal-name">
                 {userDetail.firstName} {userDetail.lastName}
               </div>
-              <div className="detail-modal-detail-text">
-                Age:{" "}
-                <span className="detail-modal-text">{userDetail?.age}</span>
-              </div>
-              {userDetail?.bio && (
+              {userDetail?.agePreferenceVisibility == true && (
+                <div className="detail-modal-detail-text">
+                  Age:{" "}
+                  <span className="detail-modal-text">{userDetail?.age}</span>
+                </div>
+              )}
+              {userDetail?.bio && userDetail?.bioVisibility == true && (
                 <div className="detail-modal-detail-text">
                   Bio:{" "}
                   <span className="detail-modal-text">{userDetail?.bio}</span>

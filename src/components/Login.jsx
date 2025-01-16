@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Login.css";
-import Logo from '../img/logo.png'
+import Logo from "../img/logo.png";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import api from "./api";
@@ -12,44 +12,52 @@ const Login = ({ setUserData, setAuthMessage }) => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-  
+
     try {
-      const response = await api.post('/auth/login', {
+      const response = await api.post("/auth/login", {
         phoneNumber,
         password,
       });
-  
+
       const userData = response.data;
-  
+
       // Extract the access token and store it
       const accessToken = userData.data.accessToken;
-  
+
       // Save access token and user data in localStorage
       localStorage.setItem("authToken", accessToken);
       localStorage.setItem("userData", JSON.stringify(userData));
-  
+
       console.log("Logging in with", phoneNumber, password, userData);
-      setAuthMessage({ text: 'Login successful! Welcome back.', status: 'success' });
-  
+      setAuthMessage({
+        text: "Login successful! Welcome back.",
+        status: "success",
+      });
+
       setUserData(userData);
-      navigate("/");
-  
+      if (userData?.success == true) {
+        navigate("/");
+        setTimeout(() => {
+          window.location.reload();
+        }, 1);
+      }
+
       setTimeout(() => {
         setAuthMessage(null);
       }, 3000);
     } catch (error) {
       console.error("Login failed", error.response?.data || error.message);
-      setAuthMessage({ text: 'Login failed: ' + (error.response?.data?.message || error.message), status: 'fail' });
-  
+      setAuthMessage({
+        text:
+          "Login failed: " + (error.response?.data?.message || error.message),
+        status: "fail",
+      });
+
       setTimeout(() => {
         setAuthMessage(null);
       }, 5000);
     }
   };
-  
-  
-
-
 
   return (
     <div className="login-container">
@@ -72,7 +80,9 @@ const Login = ({ setUserData, setAuthMessage }) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button className="login-button" type="submit">Log In</button>
+        <button className="login-button" type="submit">
+          Log In
+        </button>
       </form>
       {/* <div className="social-login">
         <button className="button">Log in with Facebook</button>

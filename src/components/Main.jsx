@@ -1,22 +1,40 @@
+import { IoMdMore } from "react-icons/io";
+import { FaRegArrowAltCircleLeft } from "react-icons/fa";
+import { FaRegArrowAltCircleRight } from "react-icons/fa";
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import TinderCard from "react-tinder-card";
-import logo from "../img/logo.png";
 import { useNavigate } from "react-router-dom";
 import api from "./api";
 
-function Advanced({ db = [], setCurrentPage }) {
+function Advanced() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lastDirection, setLastDirection] = useState();
   const currentIndexRef = useRef(currentIndex);
   const navigate = useNavigate();
   const [userDetail, setUserDetail] = useState({});
   const [detailModal, setDetailModal] = useState(false);
-  const [actionMessage, setActionMessage] = useState(""); // New state for action message
+  const [actionMessage, setActionMessage] = useState("");
+  const [users, setUsers] = useState([]);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await api.get(`/users/get-all?page=0&size=100`);
+      setUsers(response?.data?.data);
+    } catch (error) {
+      console.error("Error fetching users:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     if (!token) {
       navigate("/login");
+    } else {
+      // window.location.reload();
     }
   }, [navigate]);
 
@@ -25,19 +43,19 @@ function Advanced({ db = [], setCurrentPage }) {
   }, [currentIndex]);
 
   const childRefs = useMemo(() => {
-    return Array.isArray(db) ? db.map(() => React.createRef()) : [];
-  }, [db]);
+    return users.map(() => React.createRef());
+  }, [users]);
 
   const updateCurrentIndex = (val) => {
     setCurrentIndex(val);
     currentIndexRef.current = val;
   };
 
-  const canGoBack = currentIndex < db.length - 1;
-  const canSwipe = currentIndex >= 0 && currentIndex < db.length - 1; // Disable swiping for the last user
+  const canGoBack = currentIndex < users.length - 1;
+  const canSwipe = currentIndex >= 0 && currentIndex < users.length - 1;
 
   const swiped = async (direction, nameToDelete, index, user) => {
-    if (currentIndex >= db.length - 1) {
+    if (currentIndex >= users.length - 1) {
       return;
     }
 
@@ -55,11 +73,8 @@ function Advanced({ db = [], setCurrentPage }) {
         console.error("Error liking user:", error);
       }
     }
-
-    setCurrentPage((prevPage) => prevPage + 1);
   };
 
-  // Inside the buttons' onClick handlers
   const handleMessage = (message) => {
     setActionMessage(message); // Set the message
     setTimeout(() => setActionMessage(""), 1000); // Clear message after 1 second
@@ -73,12 +88,12 @@ function Advanced({ db = [], setCurrentPage }) {
   };
 
   const swipe = async (dir) => {
-    if (currentIndex >= db.length - 1) {
+    if (currentIndex >= users.length - 1) {
       // Don't swipe if it's the last user
       return;
     }
 
-    if (canSwipe && currentIndex < db.length) {
+    if (canSwipe && currentIndex < users.length) {
       if (childRefs[currentIndex]?.current) {
         await childRefs[currentIndex].current.swipe(dir);
       }
@@ -86,7 +101,7 @@ function Advanced({ db = [], setCurrentPage }) {
   };
 
   const goBack = async () => {
-    if (currentIndex >= db.length - 1) {
+    if (currentIndex >= users.length - 1) {
       // Don't go back if it's the last user
       return;
     }
@@ -100,7 +115,7 @@ function Advanced({ db = [], setCurrentPage }) {
   };
 
   const randImg =
-    "https://pics.craiyon.com/2023-07-06/fabd5b7e86864d458a24a3624c7c7f23.webp";
+    "https://static.vecteezy.com/system/resources/previews/009/292/244/non_2x/default-avatar-icon-of-social-media-user-vector.jpg";
 
   const calculateAge = (birthDate) => {
     const today = new Date();
@@ -116,6 +131,33 @@ function Advanced({ db = [], setCurrentPage }) {
     return age;
   };
 
+  const [currentImageIndex, setCurrentImageIndex] = useState(
+    users[currentIndex]?.profilePictures?.length - 1 || 0
+  );
+
+  const currentImage =
+    users[currentIndex]?.profilePictures?.[currentImageIndex] || randImg;
+
+  const handleNextImage = () => {
+    if (users[currentIndex]?.profilePictures?.length > 0) {
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === users[currentIndex].profilePictures.length - 1
+          ? 0
+          : prevIndex + 1
+      );
+    }
+  };
+
+  const handlePrevImage = () => {
+    if (users[currentIndex]?.profilePictures?.length > 0) {
+      setCurrentImageIndex((prevIndex) =>
+        prevIndex === 0
+          ? users[currentIndex].profilePictures.length - 1
+          : prevIndex - 1
+      );
+    }
+  };
+
   return (
     <div style={{ overflowY: "auto" }} className="wrap">
       <link
@@ -126,10 +168,10 @@ function Advanced({ db = [], setCurrentPage }) {
         href="https://fonts.googleapis.com/css?family=Alatsi&display=swap"
         rel="stylesheet"
       />
-      <img className="logo" src={logo} key="logo" />
+      <img className="logo" src="logo.svg" key="logo" />
       <div className="cardContainer">
-        {Array.isArray(db) && db.length > 0 ? (
-          db.map((character, index) => (
+        {users && users.length > 0 ? (
+          users.map((character, index) => (
             <TinderCard
               ref={childRefs[index]}
               className="swipe"
@@ -140,16 +182,16 @@ function Advanced({ db = [], setCurrentPage }) {
               onCardLeftScreen={() => outOfFrame(character.firstName, index)}
             >
               <div
-                onClick={() => {
-                  setUserDetail(character);
-                  setDetailModal(true);
+                style={{
+                  backgroundImage: `url(${currentImage})`,
                 }}
-                style={{ backgroundImage: `url(${randImg})` }}
                 className="card"
               >
                 <div className="info">
                   <div className="info_name">
-                    {character.firstName}
+                    <div>
+                      {character.firstName} {character.lastName}
+                    </div>
                     <div className="age">
                       {character?.age}
                       <p className="age-text">years old</p>
@@ -160,28 +202,42 @@ function Advanced({ db = [], setCurrentPage }) {
                     {character?.district}
                   </div>
                 </div>
+                <IoMdMore
+                  onClick={() => {
+                    setUserDetail(character);
+                    setDetailModal(true);
+                  }}
+                  className="card-more-icon"
+                />
+                <FaRegArrowAltCircleRight
+                  onClick={handleNextImage}
+                  className="card-right-arrow"
+                />
+                <FaRegArrowAltCircleLeft
+                  onClick={handlePrevImage}
+                  className="card-left-arrow"
+                />
               </div>
             </TinderCard>
           ))
         ) : (
           <div className="users-finished">
             <div className="snowflakes" aria-hidden="true">
-              <img src="logo.png" alt="logo" className="snowflake" />
-              <img src="logo.png" alt="logo" className="snowflake" />
-              <img src="logo.png" alt="logo" className="snowflake" />
-              <img src="logo.png" alt="logo" className="snowflake" />
-              <img src="logo.png" alt="logo" className="snowflake" />
+              <img src="logo.svg" alt="logo" className="snowflake" />
+              <img src="logo.svg" alt="logo" className="snowflake" />
+              <img src="logo.svg" alt="logo" className="snowflake" />
+              <img src="logo.svg" alt="logo" className="snowflake" />
+              <img src="logo.svg" alt="logo" className="snowflake" />
 
-              <img src="logo.png" alt="logo" className="snowflake" />
-              <img src="logo.png" alt="logo" className="snowflake" />
-              <img src="logo.png" alt="logo" className="snowflake" />
-              <img src="logo.png" alt="logo" className="snowflake" />
-              <img src="logo.png" alt="logo" className="snowflake" />
+              <img src="logo.svg" alt="logo" className="snowflake" />
+              <img src="logo.svg" alt="logo" className="snowflake" />
+              <img src="logo.svg" alt="logo" className="snowflake" />
+              <img src="logo.svg" alt="logo" className="snowflake" />
+              <img src="logo.svg" alt="logo" className="snowflake" />
             </div>
             <p className="users-finished-message">Users Finished</p>
           </div>
         )}
-        {/* {currentIndex >= db.length - 1 && <p>Users Finished</p>} */}
       </div>
 
       {/* Buttons */}
@@ -193,7 +249,7 @@ function Advanced({ db = [], setCurrentPage }) {
             swipe("left");
             handleMessage("Skipped"); // Call handleMessage with the desired message
           }}
-          disabled={currentIndex >= db.length - 1} // Disable for the last card
+          disabled={currentIndex >= users.length - 1} // Disable for the last card
         >
           <i className="fas fa-heart-crack"></i>
         </button>
@@ -201,7 +257,7 @@ function Advanced({ db = [], setCurrentPage }) {
           className="undo"
           style={{ backgroundColor: "#000" }}
           onClick={() => goBack()}
-          disabled={currentIndex >= db.length - 1} // Disable for the last card
+          disabled={currentIndex >= users.length - 1} // Disable for the last card
         >
           <i className="fas fa-undo"></i>
         </button>
@@ -209,8 +265,8 @@ function Advanced({ db = [], setCurrentPage }) {
           className="like"
           style={{ backgroundColor: "#ff5f54e4" }}
           onClick={async () => {
-            if (db[currentIndex]) {
-              const user = db[currentIndex];
+            if (users[currentIndex]) {
+              const user = users[currentIndex];
               try {
                 await api.post("/likes", { userId: user.id });
                 console.log(`User ${user.firstName} (ID: ${user.id}) liked!`);
@@ -220,9 +276,8 @@ function Advanced({ db = [], setCurrentPage }) {
               }
             }
             swipe("right");
-            setCurrentPage((prevPage) => prevPage + 1);
           }}
-          disabled={currentIndex >= db.length - 1} // Disable for the last card
+          disabled={currentIndex >= users.length - 1} // Disable for the last card
         >
           <i className="fas fa-heart"></i>
         </button>
@@ -240,7 +295,11 @@ function Advanced({ db = [], setCurrentPage }) {
           >
             <div style={{ width: "100%", textAlign: "center" }}>
               <img
-                src={userDetail.profilePictures?.[0] || randImg}
+                src={
+                  userDetail.profilePictures?.[
+                    userDetail?.profilePictures?.length - 1
+                  ] || randImg
+                }
                 alt={`${userDetail.firstName} ${userDetail.lastName}`}
                 className="detail-modal-avatar"
               />
@@ -249,11 +308,13 @@ function Advanced({ db = [], setCurrentPage }) {
               <div className="detail-modal-name">
                 {userDetail.firstName} {userDetail.lastName}
               </div>
-              <div className="detail-modal-detail-text">
-                Age:{" "}
-                <span className="detail-modal-text">{userDetail?.age}</span>
-              </div>
-              {userDetail?.bio && (
+              {userDetail?.agePreferenceVisibility == true && (
+                <div className="detail-modal-detail-text">
+                  Age:{" "}
+                  <span className="detail-modal-text">{userDetail?.age}</span>
+                </div>
+              )}
+              {userDetail?.bio && userDetail?.bioVisibility == true && (
                 <div className="detail-modal-detail-text">
                   Bio:{" "}
                   <span className="detail-modal-text">{userDetail?.bio}</span>

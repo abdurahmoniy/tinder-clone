@@ -1,3 +1,4 @@
+import { FaHeart } from "react-icons/fa";
 import React, { useEffect, useState } from "react";
 import { FaRegHeart, FaTimesCircle } from "react-icons/fa"; // except and reject icons
 import api from "./api";
@@ -13,7 +14,6 @@ export default function Mylikes() {
   const fetchUsers = async () => {
     try {
       const response = await api.get("/likes/get-all");
-      console.log(response);
 
       if (response.status === 200 && Array.isArray(response.data.data)) {
         setData(response.data.data);
@@ -39,6 +39,7 @@ export default function Mylikes() {
         setTimeout(() => setToast(""), 2000); // Hide after 2 seconds
         console.log("User liked");
       }
+      fetchUsers();
     } catch (error) {
       console.error("Error liking user:", error.message);
     }
@@ -53,6 +54,7 @@ export default function Mylikes() {
         console.log("User rejected");
         fetchUsers();
       }
+      fetchUsers();
     } catch (error) {
       console.error("Error rejecting user:", error.message);
     }
@@ -114,13 +116,23 @@ export default function Mylikes() {
                     className="liked-actions"
                   >
                     <button
-                      onClick={() => handleLike(user.id)}
+                      onClick={() => {
+                        handleLike(user.id);
+                        fetchUsers();
+                      }}
                       className="liked-action-btn"
                     >
-                      <FaRegHeart className="liked-action-btn" />
+                      {user.liked == true ? (
+                        <FaHeart className="liked-action-btn" />
+                      ) : (
+                        <FaRegHeart className="liked-action-btn" />
+                      )}
                     </button>
                     <button
-                      onClick={() => handleReject(user.id)}
+                      onClick={() => {
+                        handleReject(user.id);
+                        fetchUsers();
+                      }}
                       className="liked-action-btn reject"
                     >
                       <FaTimesCircle className="reject" />
@@ -151,11 +163,13 @@ export default function Mylikes() {
               <div className="detail-modal-name">
                 {userDetail.firstName} {userDetail.lastName}
               </div>
-              <div className="detail-modal-detail-text">
-                Age:{" "}
-                <span className="detail-modal-text">{userDetail?.age}</span>
-              </div>
-              {userDetail?.bio && (
+              {userDetail?.agePreferenceVisibility == true && (
+                <div className="detail-modal-detail-text">
+                  Age:{" "}
+                  <span className="detail-modal-text">{userDetail?.age}</span>
+                </div>
+              )}
+              {userDetail?.bio && userDetail?.bioVisibility == true && (
                 <div className="detail-modal-detail-text">
                   Bio:{" "}
                   <span className="detail-modal-text">{userDetail?.bio}</span>

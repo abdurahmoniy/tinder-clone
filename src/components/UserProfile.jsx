@@ -21,52 +21,40 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
   const [languages, setLanguages] = useState([]);
   const [interestInput, setInterestInput] = useState("");
   const [languageInput, setLanguageInput] = useState("");
+  const [confirmLogout, setConfirmLogout] = useState(false);
 
-  // Interests bo'limini to'g'irlash
+  const handleGet = () => {
+    setInterests(userData?.interests);
+    setLanguages(userData?.languages);
+    setRegion(userData?.region);
+    setDistrict(userData?.district);
+  };
+
   const handleInterestAdd = () => {
-    if (interestInput && !interests.includes(interestInput)) {
-      setInterests((prev) => [...prev, interestInput]);
-      setInterestInput(""); // Inputni tozalash
+    if (interestInput && !interests?.includes(interestInput)) {
+      setInterests((prev) =>
+        Array.isArray(prev) ? [...prev, interestInput] : [interestInput]
+      );
+      setInterestInput("");
     }
   };
 
   const handleInterestRemove = (interest) => {
-    setInterests((prev) => prev.filter((item) => item !== interest)); // Interestni olib tashlash
+    setInterests((prev) => prev.filter((item) => item !== interest));
   };
 
-  // Languages bo'limini to'g'irlash
   const handleLanguageAdd = () => {
-    if (languageInput && !languages.includes(languageInput)) {
-      setLanguages((prev) => [...prev, languageInput]);
-      setLanguageInput(""); // Inputni tozalash
+    if (languageInput && !languages?.includes(languageInput)) {
+      setLanguages((prev) =>
+        Array.isArray(prev) ? [...prev, languageInput] : [languageInput]
+      );
+      setLanguageInput("");
     }
   };
 
   const handleLanguageRemove = (language) => {
-    setLanguages((prev) => prev.filter((item) => item !== language)); // Language'ni olib tashlash
+    setLanguages((prev) => prev.filter((item) => item !== language));
   };
-
-  // const handleInterestAdd = () => {
-  //   if (interestInput && !interests.includes(interestInput)) {
-  //     setInterests([...interests, interestInput]);
-  //     setInterestInput("");
-  //   }
-  // };
-
-  // const handleLanguageAdd = () => {
-  //   if (languageInput && !languages.includes(languageInput)) {
-  //     setLanguages([...languages, languageInput]);
-  //     setLanguageInput("");
-  //   }
-  // };
-
-  // const handleInterestRemove = (interest) => {
-  //   setInterests(interests.filter((item) => item !== interest));
-  // };
-
-  // const handleLanguageRemove = (language) => {
-  //   setLanguages(languages.filter((item) => item !== language));
-  // };
 
   useEffect(() => {
     setEditedUserData(userData);
@@ -96,13 +84,22 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await api.put(`/users/update-me`, editedUserData);
+    const updatedData = {
+      ...editedUserData,
+      interests,
+      languages,
+      region,
+      district,
+    };
 
-      const updatedData = { ...userData, ...response.data.data };
-      setUserData(updatedData);
-      setCurrentUserData(updatedData);
-      localStorage.setItem("userData", JSON.stringify(updatedData));
+    try {
+      const response = await api.put(`/users/update-me`, updatedData);
+
+      const finalUpdatedData = { ...userData, ...response.data.data };
+
+      setUserData(finalUpdatedData);
+      setCurrentUserData(finalUpdatedData);
+      localStorage.setItem("userData", JSON.stringify(finalUpdatedData));
 
       setIsEditing(false);
     } catch (error) {
@@ -461,7 +458,7 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
                 </div>
 
                 <div className="item-list">
-                  {interests.map((interest, index) => (
+                  {interests?.map((interest, index) => (
                     <div key={index} className="item">
                       <span>{interest}</span>
                       <button
@@ -491,7 +488,7 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
                 </div>
 
                 <div className="item-list">
-                  {languages.map((language, index) => (
+                  {languages?.map((language, index) => (
                     <div key={index} className="item">
                       <span>{language}</span>
                       <button
@@ -574,24 +571,19 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
                 {currentUserData?.education && (
                   <div>Education: {currentUserData?.education}</div>
                 )}
-                {currentUserData?.languages?.length > 0 && (
-                  <div>
-                    Languages:
-                    {currentUserData?.languages?.map((item) => {
-                      <span>{item}</span>;
-                    })}
-                  </div>
-                )}
                 <div>
                   Location: {currentUserData?.region || ""},{" "}
                   {currentUserData?.district || ""}
                 </div>
               </div>
               <div className="action-btn">
-                <button onClick={handleLogout}>Logout</button>
+                <button onClick={() => setConfirmLogout(true)}>Logout</button>
                 <button
                   style={{ backgroundColor: "#007bff" }}
-                  onClick={() => setIsEditing(true)}
+                  onClick={() => {
+                    setIsEditing(true);
+                    handleGet();
+                  }}
                 >
                   Edit Profile
                 </button>
@@ -631,6 +623,37 @@ const UserProfile = ({ userData, setUserData, handleLogout }) => {
             )
           }
         />
+      )}
+
+      {/* logout confirm modal */}
+      {confirmLogout && (
+        <div
+          onClick={() => setConfirmLogout(false)}
+          className="confirm-logout-modal"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="confirm-logout-modal-content"
+          >
+            <h3 style={{ marginBottom: 20 }}>
+              Are you sure you want to logout?
+            </h3>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <button
+                onClick={() => setConfirmLogout(false)}
+                className="confirm-logout-modal-cancel-btn"
+              >
+                No, Cancel
+              </button>
+              <button
+                className="confirm-logout-modal-logout-btn"
+                onClick={handleLogout}
+              >
+                Yes, Logout
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
