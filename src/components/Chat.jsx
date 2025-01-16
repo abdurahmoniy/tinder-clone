@@ -70,7 +70,6 @@ export default function Chat({ setNavDisplay, userData }) {
 
   return (
     <div className="chat">
-      {/* Chat List or Window based on currentUser */}
       {!currentUser ? (
         <div className="chat-list">
           <div className="current-user">
